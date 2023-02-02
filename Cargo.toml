@@ -1,0 +1,19 @@
+[package]
+name = "chat_app"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+path = "src/lib.rs"
+
+[[bin]]
+path = "src/main.rs"
+name = "chat_app"
+
+[dependencies]
+actix-web = "4"
+tokio = { version = "1", features = ["macros", "rt-multi-thread"] }
+rusqlite = "0.28"
+serde = { version = "1", features = ["serde_derive" ] }
+serde_json = "1"
+futures-util = { version = "0.3", default-features = false, features = ["sink"] }
