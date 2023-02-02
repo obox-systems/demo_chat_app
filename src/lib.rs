@@ -62,16 +62,15 @@ async fn get_messages(db: web::Data<Mutex<Connection>>) -> HttpResponse {
 
 #[post("/message")]
 async fn new_message_handler(req: web::Json<Message>, db: web::Data<Mutex<Connection>>) -> impl Responder {
-  if let Ok(_) = db.lock().await.execute(
+  match db.lock().await.execute(
     "INSERT INTO messages (username, message) VALUES (?1, ?2)", 
       (&req.username, &req.message)) {
-        HttpResponse::build(StatusCode::OK)
-      } else {
-        HttpResponse::build(StatusCode::INTERNAL_SERVER_ERROR)
+        Ok(_) => HttpResponse::build(StatusCode::OK).finish(),
+        Err(err) => HttpResponse::build(StatusCode::INTERNAL_SERVER_ERROR).body(format!("Error: {err}")),
       }
 }
 
-fn create_temp_db() -> rusqlite::Result<Connection> {
+pub fn create_temp_db() -> rusqlite::Result<Connection> {
 
   let conn = Connection::open_in_memory()?;
 
@@ -84,10 +83,8 @@ fn create_temp_db() -> rusqlite::Result<Connection> {
   Ok(conn)
 }
 
-pub fn run(http: std::net::TcpListener) -> Result<Server, Box<dyn Error>>
+pub fn run(http: std::net::TcpListener, conn: Connection) -> Result<Server, Box<dyn Error>>
 {
-  let conn = create_temp_db()?;
-
   let data = web::Data::new(
     Mutex::new(conn)
   );
