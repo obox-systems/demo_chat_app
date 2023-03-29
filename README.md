@@ -2,10 +2,8 @@
 
 This is a backend for a chat.
 
-The essence of the work is that the client sends a notification to the backend
-and these notifications are shared with other connected clients.
-
-Messages are stored in memory on an SQLite DB for the sake of simplicity.
+The essence of the work is that the client sends a message to the backend
+and these messages are shared with other connected clients via websockets.
 
 # Try it out!
 
@@ -18,4 +16,10 @@ $ cargo run --release
 ```
 POST 127.0.0.1:8080/message
 GET 127.0.0.1:8080/messages
+```
+4. As for continuous message updates you can use [websocat](https://github.com/vi/websocat):
+```
+$ cargo install websocat
+
+$ websocat ws://127.0.0.1:9090
 ```
