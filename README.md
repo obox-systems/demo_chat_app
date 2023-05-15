@@ -5,6 +5,8 @@ This is a backend for a chat.
 The essence of the work is that the client sends a message to the backend
 and these messages are shared with other connected clients via websockets.
 
+![GIF demo](/demo/recording.gif?raw=true "CRUD and websocket")
+
 # Try it out!
 
 1. Install [Rust](https://rustup.rs/)
