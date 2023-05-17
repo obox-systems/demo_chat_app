@@ -15,7 +15,7 @@ use tokio_tungstenite::{accept_async, tungstenite::Message, WebSocketStream};
 type Tx = SplitSink<WebSocketStream<TcpStream>, Message>;
 type PeerList = Arc<Mutex<Vec<Tx>>>;
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 enum WsTypes {
   Create,
@@ -23,13 +23,13 @@ enum WsTypes {
   Delete,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct WsMessage<T> {
   r#type: WsTypes,
   data: T,
 }
 
-#[derive(Serialize)]
+#[derive(Debug, Serialize)]
 pub struct MessageWithId {
   id: i64,
   #[serde(flatten)]
@@ -57,6 +57,7 @@ pub fn ws_delete_message(id: i64) -> WsMessage<i64> {
   }
 }
 
+#[derive(Debug)]
 pub struct Websocket {
   tx: Arc<Sender<String>>,
 }
@@ -103,7 +104,7 @@ async fn handle_connection(peers: PeerList, raw_stream: TcpStream, mut rx_out: R
 
         let mut to_remove = vec![];
         for (index, client) in peers.iter_mut().enumerate() {
-          if let Err(_) = client.send(Message::Text(msg.clone())).await {
+          if client.send(Message::Text(msg.clone())).await.is_err() {
             to_remove.push(index);
           }
         }

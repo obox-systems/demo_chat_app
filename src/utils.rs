@@ -35,6 +35,6 @@ pub fn new_access_token() -> String {
 pub fn verify_password(password: &str, hash: &str) -> Result<(), argon2::password_hash::Error> {
   let params = Params::new(48, 1, 1, None).unwrap();
   let argon2 = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
-  let parsed_hash = PasswordHash::new(&hash)?;
+  let parsed_hash = PasswordHash::new(hash)?;
   argon2.verify_password(password.as_bytes(), &parsed_hash)
 }
