@@ -97,6 +97,7 @@ async fn new_message_handler(
   }
 }
 
+/// Binds to the address and serves the API.
 pub async fn run(http: TcpListener, ws: &str, db: SqlitePool) -> anyhow::Result<Server> {
   let db = Data::new(db);
   let ws = Data::new(new_ws_server(ws).await?);

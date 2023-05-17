@@ -23,12 +23,14 @@ enum WsTypes {
   Delete,
 }
 
+/// WebSocket message format.
 #[derive(Debug, Serialize)]
 pub struct WsMessage<T> {
   r#type: WsTypes,
   data: T,
 }
 
+/// WebSocket message data.
 #[derive(Debug, Serialize)]
 pub struct MessageWithId {
   id: i64,
@@ -36,6 +38,7 @@ pub struct MessageWithId {
   message: crate::data::Message,
 }
 
+/// Creates new message object.
 pub fn ws_new_message(id: i64, message: crate::data::Message) -> WsMessage<MessageWithId> {
   WsMessage {
     r#type: WsTypes::Create,
@@ -43,6 +46,7 @@ pub fn ws_new_message(id: i64, message: crate::data::Message) -> WsMessage<Messa
   }
 }
 
+/// Creates update message object.
 pub fn ws_update_message(id: i64, message: crate::data::Message) -> WsMessage<MessageWithId> {
   WsMessage {
     r#type: WsTypes::Update,
@@ -50,6 +54,7 @@ pub fn ws_update_message(id: i64, message: crate::data::Message) -> WsMessage<Me
   }
 }
 
+/// Creates delete message object.
 pub fn ws_delete_message(id: i64) -> WsMessage<i64> {
   WsMessage {
     r#type: WsTypes::Delete,
@@ -57,12 +62,14 @@ pub fn ws_delete_message(id: i64) -> WsMessage<i64> {
   }
 }
 
+/// WebSocket message exchanger.
 #[derive(Debug)]
 pub struct Websocket {
   tx: Arc<Sender<String>>,
 }
 
 impl Websocket {
+  /// Send the message to all connected clients.
   pub fn send<T: Serialize>(&self, data: WsMessage<T>) -> anyhow::Result<usize> {
     if self.tx.receiver_count() == 0 {
       Ok(0)
@@ -72,6 +79,7 @@ impl Websocket {
   }
 }
 
+/// Binds to the address and serves new WebSocket server.
 pub async fn new_ws_server(addr: &str) -> anyhow::Result<Websocket> {
   let listener = TcpListener::bind(addr).await?;
   let (tx, _) = tokio::sync::broadcast::channel::<String>(1);

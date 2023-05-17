@@ -4,6 +4,7 @@ use argon2::{
 };
 use rand::{rngs::OsRng, seq::SliceRandom};
 
+/// Creates password's hash using Argon2
 pub fn hash_password(password: &str) -> Result<String, argon2::password_hash::Error> {
   let salt = SaltString::generate(&mut OsRng);
   let params = Params::new(48, 1, 1, None).unwrap();
@@ -28,10 +29,12 @@ fn generate_password(symbols: &[char], length: usize) -> Option<String> {
 }
 
 const AVAILABE: &str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+/// Generates new random access token.
 pub fn new_access_token() -> String {
   generate_password(&AVAILABE.chars().collect::<Vec<char>>()[..], 64).unwrap()
 }
 
+/// Verifies password with stored hash.
 pub fn verify_password(password: &str, hash: &str) -> Result<(), argon2::password_hash::Error> {
   let params = Params::new(48, 1, 1, None).unwrap();
   let argon2 = Argon2::new(Algorithm::Argon2id, Version::V0x13, params);
