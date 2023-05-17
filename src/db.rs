@@ -1,6 +1,6 @@
 use sqlx::{migrate::MigrateDatabase, Result, Sqlite, SqlitePool};
 
-/// Creates in memory DB. 
+/// Creates in memory DB.
 pub async fn create_temp_db() -> Result<SqlitePool> {
   open_some_db(None).await
 }
